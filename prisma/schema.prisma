@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  INVITED
+  SUSPENDED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  firstName     String?
+  lastName      String?
+  username      String?
+  email         String    @unique
+  password      String
+  emailVerified DateTime?
+  accounts      Account[]
+
+  role   UserRole   @default(USER)
+  status UserStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model FiscalNotes {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  receiptDate    DateTime // DATA RECBTO
+  arrivalTime    String // HORA CHEGADA
+  orderNumber    String // Nº PEDIDO
+  invoiceNumber  String // NºNF ENTRADA
+  invoiceSeries  String // Nº SÉRIE
+  companyName    String // RAZÃO SOCIAL
+  issueDate      DateTime // DATA EMISSÃO
+  dueDate1       DateTime? // 1º PARC. VENCTO
+  dueDate2       DateTime? // 2º PARC. VENCTO
+  dueDate3       DateTime? // 3º PARC. VENCTO
+  carrierName    String? // NOME DA TRANSPORTADORA
+  vehiclePlate   String? // PLACA DO VEÍCULO
+  driverName     String? // NOME MOTORISTA
+  driverDocument String? // RG / CPF
+  exitNoteNumber String? // N.F. SAÍDA
+  exitTime       String? // HORA SAÍDA
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
