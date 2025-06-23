@@ -23,14 +23,15 @@ enum UserStatus {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   firstName     String?
   lastName      String?
   username      String?
-  email         String    @unique
+  email         String        @unique
   password      String
   emailVerified DateTime?
   accounts      Account[]
+  fiscalNotes   FiscalNotes[]
 
   role   UserRole   @default(USER)
   status UserStatus @default(ACTIVE)
@@ -81,6 +82,9 @@ model FiscalNotes {
   driverDocument String? // RG / CPF
   exitNoteNumber String? // N.F. SAÍDA
   exitTime       String? // HORA SAÍDA
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 }
 
 model VerificationToken {

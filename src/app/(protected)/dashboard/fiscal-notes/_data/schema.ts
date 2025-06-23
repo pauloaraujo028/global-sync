@@ -30,4 +30,8 @@ export const createFiscalNotesSchema = z.object({
   exitTime: z.string().optional(),
 });
 
-export type FiscalNotesTransaction = z.infer<typeof createFiscalNotesSchema>;
+export type FiscalNotesTransaction = z.infer<typeof createFiscalNotesSchema> & {
+  user?: {
+    username: string;
+  };
+};

@@ -29,7 +29,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { createUser, updateUser } from "../_data/actions";
-import { userTypes } from "../_data/data";
+import { userStatus, userTypes } from "../_data/data";
 import { createUserSchema, User } from "../_data/schema";
 
 interface Props {
@@ -58,7 +58,6 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
           lastName: "",
           email: "",
           role: "",
-          // phoneNumber: "",
           password: "",
           confirmPassword: "",
           isEdit,
@@ -201,25 +200,6 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
-                    <FormLabel className="col-span-2 text-right">
-                      Phone Number
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="+123456789"
-                        className="col-span-4"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
-                  </FormItem>
-                )}
-              /> */}
               <FormField
                 control={form.control}
                 name="role"
@@ -234,6 +214,28 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                       placeholder="Selecione um cargo"
                       className="col-span-4"
                       items={userTypes.map(({ label, value }) => ({
+                        label,
+                        value,
+                      }))}
+                    />
+                    <FormMessage className="col-span-4 col-start-3" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0">
+                    <FormLabel className="col-span-2 text-right">
+                      Status
+                    </FormLabel>
+                    <SelectDropdown
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Selecione um status"
+                      className="col-span-4"
+                      items={userStatus.map(({ label, value }) => ({
                         label,
                         value,
                       }))}

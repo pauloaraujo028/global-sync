@@ -114,11 +114,17 @@ export const login = async (data: z.infer<typeof loginSchema>) => {
     return { error: "Email ou senha incorretos" };
   }
 
+  if (existingUser.status !== "ACTIVE") {
+    return {
+      error: "Sua conta está inativa ou suspensa. Contate o administrador.",
+    };
+  }
+
   try {
     await signIn("credentials", {
       email,
       password,
-      redirectTO: DEFAULT_LOGIN_REDIRECT,
+      redirectTo: DEFAULT_LOGIN_REDIRECT,
     });
 
     return {
@@ -142,10 +148,6 @@ export const login = async (data: z.infer<typeof loginSchema>) => {
 
     throw error;
   }
-
-  return {
-    error: "Erro ao fazer login, tente novamente mais tarde",
-  };
 };
 
 export const register = async (data: z.infer<typeof registerSchema>) => {

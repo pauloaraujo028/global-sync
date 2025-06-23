@@ -1,5 +1,6 @@
 "use server";
 
+import { currentUser } from "@/data/auth";
 import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -7,7 +8,15 @@ import { createFiscalNotesSchema } from "./schema";
 
 export const getFiscalNotes = async () => {
   try {
-    const transactions = await db.fiscalNotes.findMany({});
+    const transactions = await db.fiscalNotes.findMany({
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
     return transactions;
   } catch (error) {
     console.error("Erro ao buscar transações:", error);
@@ -24,7 +33,15 @@ export const createFiscalNotes = async (
   if (!parsed.success) {
     console.log(parsed.error.format());
     return {
-      error: "Falha ao criar a conta, verifique os dados digitados",
+      error: "Falha ao criar NF, verifique os dados digitados",
+    };
+  }
+
+  const user = await currentUser();
+
+  if (!user || !user.id) {
+    return {
+      error: "Usuário não autenticado.",
     };
   }
 
@@ -34,17 +51,18 @@ export const createFiscalNotes = async (
     await db.fiscalNotes.create({
       data: {
         ...rest,
+        userId: user.id,
       },
     });
 
     revalidatePath("/invoices");
     return {
-      success: "Cadastro realizado com sucesso",
+      success: "NF cadastrada com sucesso",
     };
   } catch (error) {
-    console.error("Erro ao criar transação:", error);
+    console.error("Erro ao criar NF:", error);
     return {
-      error: "Erro ao cadastrar usuário, tente novamente mais tarde",
+      error: "Erro ao cadastrar NF, tente novamente mais tarde",
     };
   }
 };
@@ -115,7 +133,7 @@ export const updateFiscalNotes = async (
       success: "NF atualizada com sucesso.",
     };
   } catch (error) {
-    console.error("Erro ao atualizar transação:", error);
+    console.error("Erro ao atualizar NF:", error);
     return { error: "Erro ao atualizar a NF, tente novamente mais tarde." };
   }
 };
@@ -127,10 +145,10 @@ export const deleteFiscalNotes = async (id: string) => {
     });
 
     revalidatePath("/invoices");
-    return { success: true, message: "Transação deletada com sucesso." };
+    return { success: true, message: " NF deletada com sucesso." };
   } catch (error) {
-    console.error("Erro ao deletar transação:", error);
-    return { success: false, message: "Erro ao deletar transação." };
+    console.error("Erro ao deletar NF:", error);
+    return { success: false, message: "Erro ao deletar NF." };
   }
 };
 
@@ -143,9 +161,9 @@ export const deleteFiscalNotesBatch = async (ids: string[]) => {
     });
 
     revalidatePath("/invoices");
-    return { success: true, message: "Transações deletadas com sucesso." };
+    return { success: true, message: "NF deletadas com sucesso." };
   } catch (error) {
-    console.error("Erro ao deletar transações:", error);
-    return { success: false, message: "Erro ao deletar transações." };
+    console.error("Erro ao deletar NF:", error);
+    return { success: false, message: "Erro ao deletar NF." };
   }
 };

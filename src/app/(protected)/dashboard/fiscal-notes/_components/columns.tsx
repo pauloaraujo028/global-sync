@@ -1,9 +1,7 @@
 "use client";
 
-// import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-// import { labels } from "../data/data";
 import { FiscalNotesTransaction } from "../_data/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
@@ -257,60 +255,50 @@ export const columns: ColumnDef<FiscalNotesTransaction>[] = [
       return <div className="w-fit text-nowrap">{hour || "-"}</div>;
     },
   },
-  // {
-  //   accessorKey: "status",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Status" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     const status = statuses.find(
-  //       (status) => status.value === row.getValue("status")
-  //     );
-
-  //     if (!status) {
-  //       return null;
-  //     }
-
-  //     return (
-  //       <div className="flex w-[100px] items-center">
-  //         {status.icon && (
-  //           <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-  //         )}
-  //         <span>{status.label}</span>
-  //       </div>
-  //     );
-  //   },
-  //   filterFn: (row, id, value) => {
-  //     return value.includes(row.getValue(id));
-  //   },
-  // },
-  // {
-  //   accessorKey: "priority",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Priority" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     const priority = priorities.find(
-  //       (priority) => priority.value === row.getValue("priority")
-  //     );
-
-  //     if (!priority) {
-  //       return null;
-  //     }
-
-  //     return (
-  //       <div className="flex items-center">
-  //         {priority.icon && (
-  //           <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-  //         )}
-  //         <span>{priority.label}</span>
-  //       </div>
-  //     );
-  //   },
-  //   filterFn: (row, id, value) => {
-  //     return value.includes(row.getValue(id));
-  //   },
-  // },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Criado em" />
+    ),
+    cell: ({ row }) => {
+      const date = row.getValue("createdAt") as Date;
+      const formattedDate = date.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+      return <div className="w-fit text-nowrap">{formattedDate}</div>;
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Editado em" />
+    ),
+    cell: ({ row }) => {
+      const date = row.getValue("updatedAt") as Date;
+      const formattedDate = date.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+      return <div className="w-fit text-nowrap">{formattedDate}</div>;
+    },
+  },
+  {
+    accessorKey: "user.name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Usuário" />
+    ),
+    cell: ({ row }) => {
+      const user = row.original.user;
+      return (
+        <span className="max-w-32 truncate font-medium">
+          {user?.username ?? "-"}
+        </span>
+      );
+    },
+  },
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,

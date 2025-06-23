@@ -7,6 +7,7 @@
     "build": "prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "next lint",
+    "check": "next build && next lint",
     "db:migrate": "npx prisma migrate dev",
     "db:reset": "prisma migrate reset && prisma migrate dev",
     "db:studio": "npx prisma studio"

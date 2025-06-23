@@ -18,6 +18,10 @@ export default async function FiscalNotePage() {
     driverDocument: fiscalNote.driverDocument ?? undefined,
     exitNoteNumber: fiscalNote.exitNoteNumber ?? undefined,
     exitTime: fiscalNote.exitTime ?? undefined,
+    user: {
+      ...fiscalNote.user,
+      username: fiscalNote.user?.username ?? "",
+    },
   }));
 
   return (

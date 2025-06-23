@@ -3,7 +3,7 @@
 import { getUserByEmail, getUserByUsername } from "@/data/user";
 import { db } from "@/lib/prisma";
 import { generateUniqueUsername } from "@/lib/utils";
-import { UserRole } from "@prisma/client";
+import { UserRole, UserStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -26,6 +26,8 @@ export const createUser = async (data: z.infer<typeof createUserSchema>) => {
       password,
       confirmPassword,
       username: rawUsername,
+      role,
+      status,
     } = validatedFields.data;
 
     if (password !== confirmPassword) {
@@ -59,20 +61,6 @@ export const createUser = async (data: z.infer<typeof createUserSchema>) => {
       };
     }
 
-    // coloca o username com numero incremental
-    // const username = await generateUniqueUsername(firstName, lastName);
-
-    // para bloquear o username caso o username já exista
-    // const username = `${slugify(firstName)}.${slugify(lastName)}`;
-
-    // const existingUsername = await getUserByUsername(username || "");
-
-    // if (existingUsername) {
-    //   return {
-    //     error: "Usuário já existe",
-    //   };
-    // }
-
     await db.user.create({
       data: {
         firstName,
@@ -80,6 +68,8 @@ export const createUser = async (data: z.infer<typeof createUserSchema>) => {
         email: lowercaseEmail,
         password: hashedPassword,
         username: username,
+        role: role as UserRole,
+        status: status as UserStatus,
       },
     });
 
@@ -113,6 +103,7 @@ export const updateUser = async (data: z.infer<typeof createUserSchema>) => {
       password,
       confirmPassword,
       role,
+      status,
       username: rawUsername,
     } = validatedFields.data;
 
@@ -169,6 +160,7 @@ export const updateUser = async (data: z.infer<typeof createUserSchema>) => {
         username: usernameToUpdate,
         email: lowercaseEmail,
         role: role as UserRole,
+        status: status as UserStatus,
         ...(updatedPassword && { password: updatedPassword }),
       },
     });

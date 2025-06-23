@@ -11,6 +11,21 @@ export const callTypes = new Map<UserStatus, string>([
   ],
 ]);
 
+export const userStatus = [
+  {
+    label: "Ativo",
+    value: "ACTIVE",
+  },
+  {
+    label: "Inativo",
+    value: "INACTIVE",
+  },
+  {
+    label: "Suspenso",
+    value: "SUSPENDED",
+  },
+] as const;
+
 export const userTypes = [
   // {
   //   label: "Superadmin",

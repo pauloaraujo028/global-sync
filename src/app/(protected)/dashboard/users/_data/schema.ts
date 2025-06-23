@@ -1,10 +1,6 @@
 import { z } from "zod";
 
 const userStatusSchema = z.union([
-  // z.literal("active"),
-  // z.literal("inactive"),
-  // z.literal("invited"),
-  // z.literal("suspended"),
   z.literal("ACTIVE"),
   z.literal("INACTIVE"),
   z.literal("INVITED"),
@@ -12,13 +8,7 @@ const userStatusSchema = z.union([
 ]);
 export type UserStatus = z.infer<typeof userStatusSchema>;
 
-const userRoleSchema = z.union([
-  z.literal("ADMIN"),
-  z.literal("USER"),
-  // z.literal("superadmin"),
-  // z.literal("cashier"),
-  // z.literal("manager"),
-]);
+const userRoleSchema = z.union([z.literal("ADMIN"), z.literal("USER")]);
 
 const userSchema = z.object({
   id: z.string(),
@@ -26,7 +16,6 @@ const userSchema = z.object({
   lastName: z.string(),
   username: z.string(),
   email: z.string(),
-  // phoneNumber: z.string(),
   status: userStatusSchema,
   role: userRoleSchema,
   createdAt: z.coerce.date(),
@@ -45,12 +34,12 @@ export const createUserSchema = z
       .string()
       .min(1, { message: "Username is required." })
       .optional(),
-    // phoneNumber: z.string().min(1, { message: "Phone number is required." }),
     email: z
       .string()
       .min(1, { message: "E-mail é obrigatório." })
       .email({ message: "E-mail inválido." }),
     role: z.string().min(1, { message: "Cargo é obrigatório." }),
+    status: userStatusSchema,
     password: z.string().transform((pwd) => pwd.trim()),
     confirmPassword: z.string().transform((pwd) => pwd.trim()),
     isEdit: z.boolean(),
@@ -68,26 +57,10 @@ export const createUserSchema = z
       if (password.length < 4) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Senha deve ter pelo menos 6 caracteres.",
+          message: "Senha deve ter pelo menos 4 caracteres.",
           path: ["password"],
         });
       }
-
-      // if (!password.match(/[a-z]/)) {
-      //   ctx.addIssue({
-      //     code: z.ZodIssueCode.custom,
-      //     message: "Senha deve conter pelo menos uma letra minúscula.",
-      //     path: ["password"],
-      //   });
-      // }
-
-      // if (!password.match(/\d/)) {
-      //   ctx.addIssue({
-      //     code: z.ZodIssueCode.custom,
-      //     message: "Senha deve conter pelo menos um número.",
-      //     path: ["password"],
-      //   });
-      // }
 
       if (password !== confirmPassword) {
         ctx.addIssue({
