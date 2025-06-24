@@ -79,15 +79,7 @@ export function FiscalNotesMutateDrawer({
         }
         if (res.success) {
           form.reset();
-          toast("You submitted the following values:", {
-            description: (
-              <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                <code className="text-white">
-                  {JSON.stringify(values, null, 2)}
-                </code>
-              </pre>
-            ),
-          });
+          toast("Nota fiscal salva com sucesso!");
           onOpenChange(false);
         }
       });

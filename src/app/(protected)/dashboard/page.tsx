@@ -20,6 +20,10 @@ export default function DashboardPage() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
 
+  if (session?.user?.role !== "ADMIN") {
+    router.push("/dashboard/fiscal-notes");
+  }
+
   useEffect(() => {
     router.refresh();
 
